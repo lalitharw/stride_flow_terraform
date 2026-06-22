@@ -81,7 +81,7 @@ cat > /stride_flow/docker-compose.yaml << EOF
 services:
   backend:
     container_name: stride_flow_backend
-    image: ${BACKEND_ECR}
+    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_backend_ecr:latest
     restart: unless-stopped
     environment:
       - APP_NAME=${APP_NAME}
@@ -97,7 +97,7 @@ services:
 
   caddy:
     container_name: stride_flow_caddy
-    image: ${FRONTEND_ECR}
+    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_caddy_ecr:latest
     restart: unless-stopped
     ports:
       - "80:80"
