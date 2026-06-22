@@ -1,8 +1,8 @@
 resource "aws_autoscaling_group" "stride_flow_asg" {
   name                      = "stride-flow-asg"
-  max_size                  = 2
-  min_size                  = 1
-  desired_capacity          = 1
+  max_size                  = 4
+  min_size                  = 2
+  desired_capacity          = 2
   health_check_grace_period = 600
   health_check_type         = "ELB"
   force_delete              = true
