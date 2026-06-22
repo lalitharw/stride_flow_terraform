@@ -23,7 +23,6 @@ module "rds" {
 }
 
 module "ec2" {
-
   source               = "./modules/ec2"
   backend_sg_id        = module.sg.backend-sg-id
   private_subnets      = module.vpc.private_subnets_id
@@ -32,7 +31,6 @@ module "ec2" {
   redis_private_subnet = module.vpc.redis_private_subnet
   iam_instance_profile = module.iam.iam_instance_profile
   eic-endpoint-sg-id   = module.sg.eic-endpoint-sg-id
-
 }
 
 module "alb" {

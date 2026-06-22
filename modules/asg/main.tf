@@ -10,6 +10,10 @@ resource "aws_autoscaling_group" "stride_flow_asg" {
     id      = var.instance_launch_id
     version = "$Latest"
   }
+
+  instance_refresh {
+    strategy = "Rolling"
+  }
   vpc_zone_identifier = var.private_subnets
   target_group_arns   = [var.target_group_arn]
   tag {
