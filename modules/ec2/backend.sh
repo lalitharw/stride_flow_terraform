@@ -52,19 +52,50 @@ aws ecr get-login-password --region us-east-1 \
     --username AWS \
     --password-stdin 962765735019.dkr.ecr.us-east-1.amazonaws.com
 
+
+apt install -y jq
+
+SECRET_JSON=$(aws secretsmanager get-secret-value \
+  --secret-id strideflow \
+  --region eu-north-1 \
+  --query SecretString \
+  --output text
+)
+
+APP_NAME=$(echo $SECRET_JSON | jq -r '.APP_NAME')
+APP_ENV=production
+APP_KEY=$(echo $SECRET_JSON | jq -r '.APP_KEY')
+APP_DEBUG=false
+DB_CONNECTION=mysql
+DB_HOST=$(echo $SECRET_JSON | jq -r '.DB_HOST')
+DB_DATABASE=$(echo $SECRET_JSON | jq -r '.DB_DATABASE')
+DB_USERNAME=$(echo $SECRET_JSON | jq -r '.DB_USERNAME')
+DB_PASSWORD=$(echo $SECRET_JSON | jq -r '.DB_PASSWORD')
+
 # Create application directory
 mkdir -p /stride_flow
 
-cat > /stride_flow/docker-compose.yaml << 'EOF'
+cat > /stride_flow/docker-compose.yaml << EOF
 services:
   backend:
     container_name: stride_flow_backend
-    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_backend_ecr:1f59d6a9a4bbb0256cbb80ad13f26c7a3f81136a
+    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_backend_ecr:3e892a95e8a98fe08ec1afd602088fa12ab28c35
     restart: unless-stopped
+    environment:
+      - APP_NAME=${APP_NAME}
+      - APP_KEY=${APP_KEY}
+      - APP_ENV=${APP_ENV}
+      - APP_DEBUG=${APP_DEBUG}
+      - DB_CONNECTION=${DB_CONNECTION}
+      - DB_HOST=${DB_HOST}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      
 
   caddy:
     container_name: stride_flow_caddy
-    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_caddy_ecr:1f59d6a9a4bbb0256cbb80ad13f26c7a3f81136a
+    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_caddy_ecr:3e892a95e8a98fe08ec1afd602088fa12ab28c35
     restart: unless-stopped
     ports:
       - "80:80"
@@ -79,3 +110,4 @@ cd /stride_flow
 
 docker compose pull
 docker compose up -d
+

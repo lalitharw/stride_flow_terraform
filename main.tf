@@ -1,6 +1,6 @@
-module "s3" {
-  source = "./modules/s3"
-}
+# module "s3" {
+#   source = "./modules/s3"
+# }
 
 module "ecr" {
   source = "./modules/ecr"
@@ -27,9 +27,12 @@ module "ec2" {
   source               = "./modules/ec2"
   backend_sg_id        = module.sg.backend-sg-id
   private_subnets      = module.vpc.private_subnets_id
+  private_subnet_id    = module.vpc.private_subnet_id
   redis_sg_id          = module.sg.redis-sg-id
   redis_private_subnet = module.vpc.redis_private_subnet
   iam_instance_profile = module.iam.iam_instance_profile
+  eic-endpoint-sg-id   = module.sg.eic-endpoint-sg-id
+
 }
 
 module "alb" {

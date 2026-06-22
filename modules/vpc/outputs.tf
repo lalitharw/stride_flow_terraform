@@ -14,3 +14,7 @@ output "public_subnets_id" {
 output "redis_private_subnet" {
   value = aws_subnet.stride_flow_redis_subnet.id
 }
+
+output "private_subnet_id" {
+  value = aws_subnet.stride_flow_private_subnet[0].id
+}

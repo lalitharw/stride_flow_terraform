@@ -13,6 +13,16 @@
 # }
 
 
+resource "aws_ec2_instance_connect_endpoint" "eic_endpoint" {
+  subnet_id          = var.private_subnet_id
+  security_group_ids = [var.eic-endpoint-sg-id]
+
+  tags = {
+    Name = "my-vpc-eic-endpoint"
+  }
+}
+
+
 
 resource "aws_instance" "stride_flow_redis_instance" {
   ami                    = data.aws_ami.ubuntu.id

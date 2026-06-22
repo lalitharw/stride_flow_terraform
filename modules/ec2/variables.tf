@@ -18,3 +18,11 @@ variable "redis_private_subnet" {
 variable "iam_instance_profile" {
   type = string
 }
+
+variable "eic-endpoint-sg-id" {
+  type = string
+}
+
+variable "private_subnet_id" {
+  type = string
+}

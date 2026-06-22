@@ -4,5 +4,5 @@
 
 
 output "instance_launch_id" {
-  value = aws_launch_template.stride_flow.name
+  value = aws_launch_template.stride_flow.id
 }

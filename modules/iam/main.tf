@@ -50,6 +50,25 @@ resource "aws_iam_policy" "ecr_read_only_policy" {
   })
 }
 
+resource "aws_iam_policy" "stride_flow_read_secret" {
+  name = "stride_flow_read_secret"
+
+  policy = jsonencode({
+    "Version" : "2012-10-17",
+    "Statement" : [
+      {
+        "Effect" : "Allow",
+        "Action" : [
+          "secretsmanager:GetSecretValue"
+        ],
+        "Resource" : [
+          "arn:aws:secretsmanager:eu-north-1:962765735019:secret:strideflow-NVrgTm"
+        ]
+      }
+    ]
+  })
+}
+
 
 resource "aws_iam_instance_profile" "stride_flow_ecr_profile" {
   name = "stride-flow-profile"
@@ -59,4 +78,10 @@ resource "aws_iam_instance_profile" "stride_flow_ecr_profile" {
 resource "aws_iam_role_policy_attachment" "ecr_attach" {
   role       = aws_iam_role.stride_flow_ec2_role.name
   policy_arn = aws_iam_policy.ecr_read_only_policy.arn
+}
+
+
+resource "aws_iam_role_policy_attachment" "secret_attach" {
+  role       = aws_iam_role.stride_flow_ec2_role.name
+  policy_arn = aws_iam_policy.stride_flow_read_secret.arn
 }

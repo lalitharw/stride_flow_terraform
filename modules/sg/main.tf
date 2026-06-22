@@ -59,7 +59,7 @@ resource "aws_security_group" "stride_flow_backend_sg" {
   tags = {
     Name = "stride_flow_backend_sg"
   }
-  
+
 }
 
 
@@ -114,6 +114,31 @@ resource "aws_security_group" "stride_flow_redis_sg" {
 
   tags = {
     Name = "stride-flow-redis-sg"
+  }
+
+}
+
+
+resource "aws_security_group" "ec2_instance_enpoint_sg" {
+  name   = "ec2-instance-enpoint-sg"
+  vpc_id = var.vpc_id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["10.0.0.0/16"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "eic-endpoint-sg"
   }
 
 }
