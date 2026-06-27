@@ -15,3 +15,7 @@ variable "private_subnets" {
 variable "redis_subnet" {
   type = string
 }
+
+variable "frontend_subnet" {
+  type = string
+}

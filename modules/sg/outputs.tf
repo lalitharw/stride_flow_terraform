@@ -17,3 +17,7 @@ output "alb-sg-id" {
 output "eic-endpoint-sg-id" {
   value = aws_security_group.ec2_instance_enpoint_sg.id
 }
+
+output "frontend-sg-id" {
+  value = aws_security_group.stride_flow_frontend_sg.id
+}

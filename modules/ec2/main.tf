@@ -22,6 +22,15 @@ resource "aws_ec2_instance_connect_endpoint" "eic_endpoint" {
   }
 }
 
+resource "aws_instance" "stride_flow_frontend_instance" {
+  ami                    = data.aws_ami.ubuntu.id
+  vpc_security_group_ids = [var.frontend-sg-id]
+  instance_type          = "t3.small"
+  subnet_id              = var.frontend_public_subnet
+  tags = {
+    Name = "stride-flow-frontend-instance"
+  }
+}
 
 
 resource "aws_instance" "stride_flow_redis_instance" {

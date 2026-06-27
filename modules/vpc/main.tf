@@ -26,7 +26,6 @@ resource "aws_subnet" "stride_flow_public_subnet" {
 # internet gateway
 resource "aws_internet_gateway" "stride_flow_internet_gateway" {
   vpc_id = aws_vpc.stride_flow_vpc.id
-
   tags = {
     Name = "stride-flow-internet-gateway"
   }
@@ -128,7 +127,7 @@ resource "aws_subnet" "stride_flow_redis_subnet" {
 resource "aws_route_table" "stride_flow_redis_route_table" {
   vpc_id = aws_vpc.stride_flow_vpc.id
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.stride_flow_nat_gateway.id
   }
   tags = {
@@ -141,6 +140,42 @@ resource "aws_route_table_association" "redis_route_table_association" {
   subnet_id      = aws_subnet.stride_flow_redis_subnet.id
   route_table_id = aws_route_table.stride_flow_redis_route_table.id
 }
+
+
+
+#frontend subnet
+resource "aws_subnet" "stride_flow_frontend_subnet" {
+  vpc_id                  = aws_vpc.stride_flow_vpc.id
+  cidr_block              = var.frontend_subnet
+  map_public_ip_on_launch = true
+  availability_zone       = data.aws_availability_zones.available.names[0]
+
+  tags = {
+    Name = "stride-flow-frontend-subnet"
+  }
+}
+
+# frontend route table
+resource "aws_route_table" "frontend_route_table" {
+  vpc_id = aws_vpc.stride_flow_vpc.id
+
+  route {
+    gateway_id = aws_internet_gateway.stride_flow_internet_gateway.id
+    cidr_block = "0.0.0.0/0"
+  }
+
+  tags = {
+    Name = "frontend-route-table"
+  }
+}
+
+# frontend route table association
+resource "aws_route_table_association" "frontend_route_table_association" {
+  subnet_id      = aws_subnet.stride_flow_frontend_subnet.id
+  route_table_id = aws_route_table.id
+}
+
+
 
 
 

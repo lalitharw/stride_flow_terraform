@@ -10,6 +10,10 @@ variable "redis_sg_id" {
   type = string
 }
 
+variable "frontend_public_subnet" {
+  type = string
+}
+
 
 variable "redis_private_subnet" {
   type = string
@@ -24,5 +28,9 @@ variable "eic-endpoint-sg-id" {
 }
 
 variable "private_subnet_id" {
+  type = string
+}
+
+variable "frontend-sg-id" {
   type = string
 }
