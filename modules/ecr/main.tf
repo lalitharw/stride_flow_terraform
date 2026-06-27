@@ -17,3 +17,13 @@ resource "aws_ecr_repository" "stride_flow_caddy_ecr" {
   }
 
 }
+
+resource "aws_ecr_repository" "stride_flow_frontend_ecr" {
+  name                 = "stride_flow_frontend_ecr"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+}

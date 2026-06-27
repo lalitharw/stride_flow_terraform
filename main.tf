@@ -2,9 +2,9 @@
 #   source = "./modules/s3"
 # }
 
-# module "ecr" {
-#   source = "./modules/ecr"
-# }
+module "ecr" {
+  source = "./modules/ecr"
+}
 
 module "vpc" {
   source          = "./modules/vpc"
