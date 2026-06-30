@@ -18,3 +18,9 @@ variable "redis_subnet" {
 variable "frontend_subnet" {
   type = string
 }
+
+variable "domain" {
+  type = string
+}
+
+

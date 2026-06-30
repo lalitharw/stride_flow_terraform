@@ -16,20 +16,24 @@
 resource "aws_ec2_instance_connect_endpoint" "eic_endpoint" {
   subnet_id          = var.private_subnet_id
   security_group_ids = [var.eic-endpoint-sg-id]
-
+  # 
   tags = {
     Name = "my-vpc-eic-endpoint"
   }
 }
 
 resource "aws_instance" "stride_flow_frontend_instance" {
-  ami                    = data.aws_ami.ubuntu.id
-  vpc_security_group_ids = [var.frontend-sg-id]
-  instance_type          = "t3.small"
-  subnet_id              = var.frontend_public_subnet
+  ami                         = data.aws_ami.ubuntu.id
+  vpc_security_group_ids      = [var.frontend-sg-id]
+  instance_type               = "t3.small"
+  subnet_id                   = var.frontend_public_subnet
+  user_data                   = file("${path.module}/frontend.sh")
+  iam_instance_profile        = var.iam_instance_profile
+  user_data_replace_on_change = true
   tags = {
     Name = "stride-flow-frontend-instance"
   }
+
 }
 
 
@@ -39,6 +43,7 @@ resource "aws_instance" "stride_flow_redis_instance" {
   instance_type          = "t3.small"
   subnet_id              = var.redis_private_subnet
   user_data              = file("${path.module}/redis.sh")
+
   tags = {
     Name = "stride-flow-redis-instance"
   }
@@ -57,5 +62,9 @@ resource "aws_launch_template" "stride_flow" {
     name = var.iam_instance_profile
   }
 
-  user_data = base64encode(file("${path.module}/backend.sh"))
+  user_data = base64encode(templatefile("${path.module}/backend.sh", {
+    redis_private_id = aws_instance.stride_flow_redis_instance.private_ip,
+    db_host          = var.db_host,
+    db_port          = var.db_port
+  }))
 }

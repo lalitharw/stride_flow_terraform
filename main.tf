@@ -23,34 +23,46 @@ module "rds" {
   rds_sg_id  = module.sg.rds_sg_id
 }
 
-# module "ec2" {
-#   source                 = "./modules/ec2"
-#   backend_sg_id          = module.sg.backend-sg-id
-#   private_subnets        = module.vpc.private_subnets_id
-#   private_subnet_id      = module.vpc.private_subnet_id
-#   redis_sg_id            = module.sg.redis-sg-id
-#   redis_private_subnet   = module.vpc.redis_private_subnet
-#   iam_instance_profile   = module.iam.iam_instance_profile
-#   eic-endpoint-sg-id     = module.sg.eic-endpoint-sg-id
-#   frontend-sg-id         = module.sg.frontend-sg-id
-#   frontend_public_subnet = module.vpc.frontend_public_subnet_id
-# }
+module "acm" {
+  source = "./modules/acm"
+  domain = var.domain
+}
 
-# module "alb" {
-#   source            = "./modules/alb"
-#   alb-sg-id         = module.sg.alb-sg-id
-#   public_subnets_id = module.vpc.public_subnets_id
-#   vpc_id            = module.vpc.vpc_id
-#   #   instance          = module.ec2.instance
-# }
+module "ec2" {
+  source                 = "./modules/ec2"
+  backend_sg_id          = module.sg.backend-sg-id
+  private_subnets        = module.vpc.private_subnets_id
+  private_subnet_id      = module.vpc.private_subnet_id
+  redis_sg_id            = module.sg.redis-sg-id
+  redis_private_subnet   = module.vpc.redis_private_subnet
+  iam_instance_profile   = module.iam.iam_instance_profile
+  eic-endpoint-sg-id     = module.sg.eic-endpoint-sg-id
+  frontend-sg-id         = module.sg.frontend-sg-id
+  frontend_public_subnet = module.vpc.frontend_public_subnet_id
+  db_host                = module.rds.rds_host
+  db_port                = module.rds.rds_port
+
+  depends_on = [module.rds]
+}
+
+module "alb" {
+  source            = "./modules/alb"
+  alb-sg-id         = module.sg.alb-sg-id
+  public_subnets_id = module.vpc.public_subnets_id
+  vpc_id            = module.vpc.vpc_id
+  certificate_arn   = module.acm.certificate_arn
+
+  depends_on = [module.acm]
+  #   instance          = module.ec2.instance
+}
 
 
-# module "asg" {
-#   source             = "./modules/asg"
-#   target_group_arn   = module.alb.target_group_arn
-#   instance_launch_id = module.ec2.instance_launch_id
-#   private_subnets    = module.vpc.private_subnets_id
-# }
+module "asg" {
+  source             = "./modules/asg"
+  target_group_arn   = module.alb.target_group_arn
+  instance_launch_id = module.ec2.instance_launch_id
+  private_subnets    = module.vpc.private_subnets_id
+}
 
 
 module "iam" {

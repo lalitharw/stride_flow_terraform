@@ -34,3 +34,11 @@ variable "private_subnet_id" {
 variable "frontend-sg-id" {
   type = string
 }
+
+variable "db_host" {
+  type = string
+}
+
+variable "db_port" {
+  type = string
+}

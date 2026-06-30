@@ -43,7 +43,8 @@ resource "aws_iam_policy" "ecr_read_only_policy" {
         ]
         Resource = [
           "arn:aws:ecr:us-east-1:962765735019:repository/stride_flow_backend_ecr",
-          "arn:aws:ecr:us-east-1:962765735019:repository/stride_flow_caddy_ecr"
+          "arn:aws:ecr:us-east-1:962765735019:repository/stride_flow_caddy_ecr",
+          "arn:aws:ecr:us-east-1:962765735019:repository/stride_flow_frontend_ecr"
         ]
       }
     ]

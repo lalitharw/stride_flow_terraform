@@ -66,16 +66,23 @@ SECRET_JSON=$(aws secretsmanager get-secret-value \
 )
 
 FRONTEND_IMAGE_TAG=$(echo $SECRET_JSON | jq -r '.FRONTEND_IMAGE_TAG')
+VITE_SERVER_URL=$(echo $SECRET_JSON | jq -r '.VITE_SERVER_URL')
 
 # Create application directory
 mkdir -p /stride_flow
+
 
 cat > /stride_flow/docker-compose.yaml << EOF
 services:
   frontend:
     container_name: stride_flow_frontend
-    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_frontend_ecr:${FRONTEND_IMAGE_TAG}
+    image: 962765735019.dkr.ecr.us-east-1.amazonaws.com/stride_flow_frontend_ecr:$FRONTEND_IMAGE_TAG
     restart: unless-stopped
+    environment: 
+        - VITE_SERVER_URL=$VITE_SERVER_URL
+    ports:
+        - "80:80"
+        - "443:443"
 EOF
 
 cd /stride_flow

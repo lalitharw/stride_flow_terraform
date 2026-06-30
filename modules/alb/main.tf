@@ -42,21 +42,37 @@ resource "aws_lb_target_group" "stride_flow_target_group" {
 
 # }
 
-# listener
+
+# listener for port 80
 resource "aws_lb_listener" "front_end" {
   load_balancer_arn = aws_lb.stride_flow_lb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
-    type = "forward"
+    type = "redirect"
 
-    forward {
-      target_group {
-        arn    = aws_lb_target_group.stride_flow_target_group.arn
-        weight = 100
-      }
-
+    redirect {
+      port        = "443"
+      protocol    = "HTTPS"
+      status_code = "HTTP_301"
     }
   }
 }
+
+
+
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.stride_flow_lb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  certificate_arn   = var.certificate_arn
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.stride_flow_target_group.arn
+  }
+
+}
+
+
